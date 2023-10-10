@@ -4,28 +4,40 @@ using UnityEngine;
 
 public class KimJoonwoo : Player
 {
-    protected override void Dash()
+    protected override IEnumerator Dash()
     {
         print("A");
+        yield return new WaitForSeconds(1);
+        stiffness = false;
     }
-    protected override void PowerSkill()
+    protected override IEnumerator PowerSkill()
     {
         print("S");
+        yield return new WaitForSeconds(1);
+        stiffness = false;
     }
-    protected override void Ultimate()
+    protected override IEnumerator Ultimate()
     {
         print("D");
+        yield return new WaitForSeconds(1);
+        stiffness = false;
     }
-    protected override void NormalAttack()
+    protected override IEnumerator NormalAttack()
     {
         print("Z");
+        yield return new WaitForSeconds(1);
+        stiffness = false;
     }
-    protected override void SlowAttack()
+    protected override IEnumerator SlowAttack()
     {
         print("X");
+        yield return new WaitForSeconds(1);
+        stiffness = false;
     }
-    protected override void FastAttack()
+    protected override IEnumerator FastAttack()
     {
         print("C");
+        yield return new WaitForSeconds(1);
+        stiffness = false;
     }
 }

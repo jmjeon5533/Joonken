@@ -9,12 +9,17 @@ public abstract class Player : MonoBehaviour
     Rigidbody2D rigid;
 
     public float HP;
+    public float maxHp;
     public float tlqkfGauge;
     public float MoveSpeed;
 
     public bool stiffness; //경직 유무
     public bool isSit; //앉음 유무
     public bool isGround; //착지 유무
+
+    public Player enemy;
+
+    public float inputDelay; 
 
     [SerializeField] float RayDistance;
 
@@ -25,6 +30,7 @@ public abstract class Player : MonoBehaviour
     private void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
+        maxHp = HP;
     }
 
     private void Update()
@@ -36,14 +42,15 @@ public abstract class Player : MonoBehaviour
     {
         if (buttonInput.Count >= 1 && !stiffness)
         {
+            stiffness = true;
             switch (buttonInput.Dequeue())
             {
-                case KeyCode.A: Dash(); break;
-                case KeyCode.S: PowerSkill(); break;
-                case KeyCode.D: Ultimate(); break;
-                case KeyCode.Z: NormalAttack(); break;
-                case KeyCode.X: SlowAttack(); break;
-                case KeyCode.C: FastAttack(); break;
+                case KeyCode.A: StartCoroutine(Dash()); break;
+                case KeyCode.S: StartCoroutine(PowerSkill()); break;
+                case KeyCode.D: StartCoroutine(Ultimate()); break;
+                case KeyCode.Z: StartCoroutine(NormalAttack()); break;
+                case KeyCode.X: StartCoroutine(SlowAttack()); break;
+                case KeyCode.C: StartCoroutine(FastAttack()); break;
             }
         }
     }
@@ -54,6 +61,7 @@ public abstract class Player : MonoBehaviour
             if (Input.GetKeyDown(key))
             {
                 buttonInput.Enqueue(key);
+                inputDelay = 0;
             }
         }
         if(Input.GetKey(KeyCode.LeftArrow) && isGround)
@@ -71,14 +79,16 @@ public abstract class Player : MonoBehaviour
         isSit = Input.GetKey(KeyCode.DownArrow);
         isGround = Physics2D.Raycast(transform.position, Vector2.down,RayDistance,LayerMask.GetMask("Ground"));
 
+        if(inputDelay >= 1) buttonInput.Clear();
+        else inputDelay += Time.deltaTime;
     }
     private void OnDrawGizmos() {
         Debug.DrawRay(transform.position, Vector2.down * RayDistance, Color.red);   
     }
-    protected abstract void Dash();
-    protected abstract void PowerSkill();
-    protected abstract void Ultimate();
-    protected abstract void NormalAttack();
-    protected abstract void SlowAttack();
-    protected abstract void FastAttack();
+    protected abstract IEnumerator Dash();
+    protected abstract IEnumerator PowerSkill();
+    protected abstract IEnumerator Ultimate();
+    protected abstract IEnumerator NormalAttack();
+    protected abstract IEnumerator SlowAttack();
+    protected abstract IEnumerator FastAttack();
 }
