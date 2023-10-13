@@ -22,7 +22,7 @@ public class KimJoonwoo : Player
     protected override IEnumerator NormalAttack()
     {
         anim.SetTrigger("Attack");
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.58f);
         stiffness = false;
     }
     protected override IEnumerator SlowAttack()

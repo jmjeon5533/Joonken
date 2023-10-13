@@ -85,7 +85,6 @@ public abstract class Player : MonoBehaviour
         isSit = Input.GetKey(KeyCode.DownArrow);
         isGround = Physics2D.Raycast(transform.position, Vector2.down, RayDistance, LayerMask.GetMask("Ground"));
         anim.SetInteger("Walk",(int)inputX * (FlipX ? -1 : 1));
-        FlipX = inputX > 0;
         sp.flipX = FlipX;
         anim.SetBool("IsGround",isGround);
         if (inputDelay >= 0.5f) buttonInput.Clear();
