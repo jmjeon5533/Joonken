@@ -22,8 +22,26 @@ public class KimJoonwoo : Player
     protected override IEnumerator NormalAttack()
     {
         anim.SetTrigger("Attack");
-        yield return new WaitForSeconds(0.58f);
+        yield return new WaitForSeconds(0.3f);
+        NAttack();
+        print("1");
+        yield return new WaitForSeconds(0.28f);
         stiffness = false;
+    }
+    public void NAttack()
+    {
+        Collider2D hit = Physics2D.OverlapBox(transform.position + new Vector3(FlipX ? -2 : 2, 0.5f),new Vector2(4,2),0,LayerMask.GetMask("Entity"));
+        if(hit.CompareTag("Entity"))
+        {
+            hit.GetComponent<Player>().Damage(skills.skill[0]);
+            print(hit.name);
+        }
+    }
+    protected override void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(transform.position + new Vector3(FlipX ? -2 : 2, 0.5f),new Vector2(4,2));
+        base.OnDrawGizmos();
     }
     protected override IEnumerator SlowAttack()
     {
