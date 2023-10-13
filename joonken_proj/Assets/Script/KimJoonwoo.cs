@@ -8,23 +8,20 @@ public class KimJoonwoo : Player
     {
         print("A");
         yield return new WaitForSeconds(1);
-        stiffness = false;
     }
     protected override IEnumerator PowerSkill()
     {
         print("S");
         yield return new WaitForSeconds(1);
-        stiffness = false;
     }
     protected override IEnumerator Ultimate()
     {
         print("D");
         yield return new WaitForSeconds(1);
-        stiffness = false;
     }
     protected override IEnumerator NormalAttack()
     {
-        print("Z");
+        anim.SetTrigger("Attack");
         yield return new WaitForSeconds(1);
         stiffness = false;
     }
@@ -32,12 +29,10 @@ public class KimJoonwoo : Player
     {
         print("X");
         yield return new WaitForSeconds(1);
-        stiffness = false;
     }
     protected override IEnumerator FastAttack()
     {
         print("C");
         yield return new WaitForSeconds(1);
-        stiffness = false;
     }
 }

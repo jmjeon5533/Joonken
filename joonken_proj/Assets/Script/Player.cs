@@ -5,8 +5,9 @@ using UnityEngine;
 
 public abstract class Player : MonoBehaviour
 {
-
     Rigidbody2D rigid;
+    SpriteRenderer sp;
+    public Animator anim;
 
     public float HP;
     public float maxHp;
@@ -19,7 +20,11 @@ public abstract class Player : MonoBehaviour
 
     public Player enemy;
 
-    public float inputDelay; 
+    public float inputDelay; //선입력 가능 시간
+    public float inputX; //X축 horizontal Input
+    public bool FlipX = false;
+
+    protected Coroutine skillCoroutine;
 
     [SerializeField] float RayDistance;
 
@@ -27,13 +32,15 @@ public abstract class Player : MonoBehaviour
 
     KeyCode[] SkillInput = { KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.Z, KeyCode.X, KeyCode.C };
 
-    private void Start()
+    protected virtual void Start()
     {
+        sp = GetComponent<SpriteRenderer>();
         rigid = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
         maxHp = HP;
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         input();
         UseSkill();
@@ -43,14 +50,17 @@ public abstract class Player : MonoBehaviour
         if (buttonInput.Count >= 1 && !stiffness)
         {
             stiffness = true;
+            print(buttonInput.Count);
+
+            if(skillCoroutine != null) StopCoroutine(skillCoroutine);
             switch (buttonInput.Dequeue())
             {
-                case KeyCode.A: StartCoroutine(Dash()); break;
-                case KeyCode.S: StartCoroutine(PowerSkill()); break;
-                case KeyCode.D: StartCoroutine(Ultimate()); break;
-                case KeyCode.Z: StartCoroutine(NormalAttack()); break;
-                case KeyCode.X: StartCoroutine(SlowAttack()); break;
-                case KeyCode.C: StartCoroutine(FastAttack()); break;
+                case KeyCode.A: skillCoroutine = StartCoroutine(Dash()); break;
+                case KeyCode.S: skillCoroutine = StartCoroutine(PowerSkill()); break;
+                case KeyCode.D: skillCoroutine = StartCoroutine(Ultimate()); break;
+                case KeyCode.Z: skillCoroutine = StartCoroutine(NormalAttack()); break;
+                case KeyCode.X: skillCoroutine = StartCoroutine(SlowAttack()); break;
+                case KeyCode.C: skillCoroutine = StartCoroutine(FastAttack()); break;
             }
         }
     }
@@ -64,26 +74,46 @@ public abstract class Player : MonoBehaviour
                 inputDelay = 0;
             }
         }
-        if(Input.GetKey(KeyCode.LeftArrow) && isGround)
+        inputX = GetHorizontalInput();        
+        if(!stiffness) rigid.velocity = new Vector2(inputX * 100 * Time.deltaTime * MoveSpeed, rigid.velocity.y);
+        if (Input.GetKeyDown(KeyCode.UpArrow) && isGround)
         {
-            rigid.velocity = new Vector2(-100 * Time.deltaTime * MoveSpeed,rigid.velocity.y);
-        }
-        if(Input.GetKey(KeyCode.RightArrow) && isGround)
-        {
-            rigid.velocity = new Vector2(100 * Time.deltaTime * MoveSpeed,rigid.velocity.y);
-        }
-        if(Input.GetKeyDown(KeyCode.UpArrow) && isGround)
-        {
+            transform.Translate(Vector2.up * 0.2f);
+            anim.SetTrigger("Jump");
             rigid.AddForce(Vector2.up * 700);
         }
         isSit = Input.GetKey(KeyCode.DownArrow);
-        isGround = Physics2D.Raycast(transform.position, Vector2.down,RayDistance,LayerMask.GetMask("Ground"));
-
-        if(inputDelay >= 1) buttonInput.Clear();
+        isGround = Physics2D.Raycast(transform.position, Vector2.down, RayDistance, LayerMask.GetMask("Ground"));
+        anim.SetInteger("Walk",(int)inputX * (FlipX ? -1 : 1));
+        FlipX = inputX > 0;
+        sp.flipX = FlipX;
+        anim.SetBool("IsGround",isGround);
+        if (inputDelay >= 0.5f) buttonInput.Clear();
         else inputDelay += Time.deltaTime;
     }
-    private void OnDrawGizmos() {
-        Debug.DrawRay(transform.position, Vector2.down * RayDistance, Color.red);   
+    float GetHorizontalInput()
+    {
+        if (Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.RightArrow))
+        {
+            return 0;
+        }
+        else if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            return -1f;
+        }
+        else if (Input.GetKey(KeyCode.RightArrow))
+        {
+            return 1f;
+        }
+        return 0;
+    }
+    public void ResetAnim()
+    {
+        stiffness = false;
+    }
+    private void OnDrawGizmos()
+    {
+        Debug.DrawRay(transform.position, Vector2.down * RayDistance, Color.red);
     }
     protected abstract IEnumerator Dash();
     protected abstract IEnumerator PowerSkill();
