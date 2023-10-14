@@ -31,6 +31,7 @@ public class KimJoonwoo : Player
     public void NAttack()
     {
         Collider2D hit = Physics2D.OverlapBox(transform.position + new Vector3(FlipX ? -2 : 2, 0.5f),new Vector2(4,2),0,LayerMask.GetMask("Entity"));
+        if(hit == null) return;
         if(hit.CompareTag("Entity"))
         {
             hit.GetComponent<Player>().Damage(skills.skill[0]);

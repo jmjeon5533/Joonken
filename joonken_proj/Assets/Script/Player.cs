@@ -67,6 +67,7 @@ public abstract class Player : MonoBehaviour
             skill.damage = 15;
             skill.dir = new Vector2(-1, 1);
             skill.throwPower = 10;
+            skill.isThrow = true;
             Damage(skill);
         }
     }
