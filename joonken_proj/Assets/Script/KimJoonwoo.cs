@@ -4,37 +4,29 @@ using UnityEngine;
 
 public class KimJoonwoo : Player
 {
-    protected override IEnumerator Dash()
+    int normalInput = 0;
+    public override void Dash()
     {
         print("A");
-        yield return new WaitForSeconds(1);
+        
     }
-    protected override IEnumerator PowerSkill()
+    public override void PowerSkill()
     {
         print("S");
-        yield return new WaitForSeconds(1);
+        
     }
-    protected override IEnumerator Ultimate()
+    public override void Ultimate()
     {
         print("D");
-        yield return new WaitForSeconds(1);
+        
     }
-    protected override IEnumerator NormalAttack()
-    {
-        anim.SetTrigger("Attack");
-        yield return new WaitForSeconds(0.3f);
-        NAttack();
-        print("1");
-        yield return new WaitForSeconds(0.28f);
-        stiffness = false;
-    }
-    public void NAttack()
+    public override void NormalAttack()
     {
         Collider2D hit = Physics2D.OverlapBox(transform.position + new Vector3(FlipX ? -2 : 2, 0.5f),new Vector2(4,2),0,LayerMask.GetMask("Entity"));
         if(hit == null) return;
         if(hit.CompareTag("Entity"))
         {
-            hit.GetComponent<Player>().Damage(skills.skill[0]);
+            hit.GetComponent<Player>().Damage(skillLists[0].skill);
             print(hit.name);
         }
     }
@@ -44,14 +36,19 @@ public class KimJoonwoo : Player
         Gizmos.DrawWireCube(transform.position + new Vector3(FlipX ? -2 : 2, 0.5f),new Vector2(4,2));
         base.OnDrawGizmos();
     }
-    protected override IEnumerator SlowAttack()
+    public override void SlowAttack()
     {
         print("X");
-        yield return new WaitForSeconds(1);
+        
     }
-    protected override IEnumerator FastAttack()
+    public override void FastAttack()
     {
         print("C");
-        yield return new WaitForSeconds(1);
+        
+    }
+    protected override void InputReset()
+    {
+        base.InputReset();
+        normalInput = 0;
     }
 }

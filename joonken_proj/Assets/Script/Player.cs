@@ -20,7 +20,7 @@ public abstract class Player : MonoBehaviour
     Rigidbody2D rigid;
     [SerializeField] SpriteRenderer sp;
     public Animator anim;
-    public SkillList skills;
+    public List<SkillList> skillLists = new List<SkillList>();
 
     public float HP;
     public float maxHp;
@@ -50,6 +50,8 @@ public abstract class Player : MonoBehaviour
 
     KeyCode[] SkillInput = { KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.Z, KeyCode.X, KeyCode.C };
 
+    public void AttackAnimationEnd() => anim.SetFloat("KeyPressRemainTime", 0.25f);
+
     protected virtual void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
@@ -76,17 +78,8 @@ public abstract class Player : MonoBehaviour
         if (buttonInput.Count >= 1 && !stiffness)
         {
             stiffness = true;
-
             if (skillCoroutine != null) StopCoroutine(skillCoroutine);
-            switch (buttonInput.Dequeue())
-            {
-                case KeyCode.A: skillCoroutine = StartCoroutine(Dash()); break;
-                case KeyCode.S: skillCoroutine = StartCoroutine(PowerSkill()); break;
-                case KeyCode.D: skillCoroutine = StartCoroutine(Ultimate()); break;
-                case KeyCode.Z: skillCoroutine = StartCoroutine(NormalAttack()); break;
-                case KeyCode.X: skillCoroutine = StartCoroutine(SlowAttack()); break;
-                case KeyCode.C: skillCoroutine = StartCoroutine(FastAttack()); break;
-            }
+            anim.SetTrigger($"{buttonInput.Dequeue().ToString()[^1]}");
         }
     }
     void HitRotation()
@@ -103,7 +96,7 @@ public abstract class Player : MonoBehaviour
             if (Input.GetKeyDown(key))
             {
                 buttonInput.Enqueue(key);
-                inputDelay = 0;
+                
             }
         }
         inputX = GetHorizontalInput();
@@ -135,8 +128,12 @@ public abstract class Player : MonoBehaviour
         }
         sp.flipX = FlipX;
         anim.SetBool("IsGround", isGround);
-        if (inputDelay >= 0.5f) buttonInput.Clear();
+        if (inputDelay >= 0.5f) InputReset();
         else inputDelay += Time.deltaTime;
+    }
+    protected virtual void InputReset()
+    {
+        buttonInput.Clear();
     }
     float GetHorizontalInput()
     {
@@ -196,10 +193,10 @@ public abstract class Player : MonoBehaviour
         yield return new WaitForSeconds(stiffTime);
         stiffness = false;
     }
-    protected abstract IEnumerator Dash();
-    protected abstract IEnumerator PowerSkill();
-    protected abstract IEnumerator Ultimate();
-    protected abstract IEnumerator NormalAttack();
-    protected abstract IEnumerator SlowAttack();
-    protected abstract IEnumerator FastAttack();
+    public abstract void Dash();
+    public abstract void PowerSkill();
+    public abstract void Ultimate();
+    public abstract void NormalAttack();
+    public abstract void SlowAttack();
+    public abstract void FastAttack();
 }

@@ -7,32 +7,32 @@ public class OK : Player
     float time;
     Vector2 pos;
 
-    protected override IEnumerator Dash()
+    public override void Dash()
     {
         throw new System.NotImplementedException();
     }
 
-    protected override IEnumerator FastAttack()
+    public override void FastAttack()
     {
         throw new System.NotImplementedException();
     }
 
-    protected override IEnumerator NormalAttack()
+    public override void NormalAttack()
     {
         throw new System.NotImplementedException();
     }
 
-    protected override IEnumerator PowerSkill()
+    public override void PowerSkill()
     {
         throw new System.NotImplementedException();
     }
 
-    protected override IEnumerator SlowAttack()
+    public override void SlowAttack()
     {
         throw new System.NotImplementedException();
     }
 
-    protected override IEnumerator Ultimate()
+    public override void Ultimate()
     {
         throw new System.NotImplementedException();
     }

@@ -440,6 +440,7 @@ GameObject:
   - component: {fileID: 733407428}
   - component: {fileID: 733407427}
   - component: {fileID: 733407433}
+  - component: {fileID: 733407434}
   m_Layer: 0
   m_Name: Kim
   m_TagString: Untagged
@@ -535,6 +536,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &733407434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 733407425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 707bc469a32fb2d4884090eaccbba9c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 2023067949}
 --- !u!1 &754640912
 GameObject:
   m_ObjectHideFlags: 0
@@ -635,7 +649,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1125615560
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -744,7 +758,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sp: {fileID: 0}
   anim: {fileID: 0}
-  skills: {fileID: 0}
+  skillLists: []
   HP: 500
   maxHp: 0
   tlqkfGauge: 0
@@ -1128,7 +1142,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 5.36, y: 7.94}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1301,7 +1315,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sp: {fileID: 733407427}
   anim: {fileID: 733407433}
-  skills: {fileID: 11400000, guid: b03bcbe5cb734c64fa3a662f42d390d6, type: 2}
+  skillLists:
+  - {fileID: 11400000, guid: b03bcbe5cb734c64fa3a662f42d390d6, type: 2}
   HP: 175
   maxHp: 0
   tlqkfGauge: 0
