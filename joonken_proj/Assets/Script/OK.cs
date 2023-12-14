@@ -39,7 +39,11 @@ public class OK : Player
 
     new void Start()
     {
-        pos = transform.position;        
+        RageObj.SetActive(false);
+        pos = transform.position;       
+        maxHp = HP;
+        tlqkfGauge = 0;
+        maxtlqkfGauge = maxHp;
     }
     new void Update()
     {

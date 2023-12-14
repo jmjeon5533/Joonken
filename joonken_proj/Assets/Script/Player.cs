@@ -7,7 +7,7 @@ using DG.Tweening;
 [System.Serializable]
 public class Skill
 {
-    public int damage;
+    public float damage;
     public Vector2 dir;
     public float throwPower;
     public float guardStiffTime;
@@ -17,45 +17,52 @@ public class Skill
 
 public abstract class Player : MonoBehaviour
 {
-    Rigidbody2D rigid;
-    [SerializeField] SpriteRenderer sp;
-    public Animator anim;
-    public List<SkillList> skillLists = new List<SkillList>();
-
-    public float HP;
-    public float maxHp;
-    public float tlqkfGauge;
-    public float MoveSpeed;
-
+    //member
     public bool stiffness; //경직 유무
     public bool isSit; //앉음 유무
     public bool isGround; //착지 유무
     public bool isGuard; //방어 유무
-
     public bool isHit; //피격 유무
-
-    public Player enemy;
-
+    public bool isRage; //레이지 유무
+    public bool flipX = false;
+    public float HP;
+    public float maxHp;
+    public float tlqkfGauge;
+    public float maxtlqkfGauge;
+    public float MoveSpeed;
     public float inputDelay; //선입력 가능 시간
     public float inputX; //X축 horizontal Input
-    public bool FlipX = false;
+    [SerializeField] float RayDistance;
+    [SerializeField] SpriteRenderer sp;
+    [SerializeField] protected GameObject RageObj;
+    public Animator anim;
+    public Player enemy;
+    protected Rigidbody2D rigid;
+    public List<SkillList> skillLists = new List<SkillList>();
+    public Queue<KeyCode> buttonInput = new Queue<KeyCode>();
 
     protected Coroutine skillCoroutine;
     protected Coroutine stiffCoroutine;
 
-    [SerializeField] float RayDistance;
-
-
-    public Queue<KeyCode> buttonInput = new Queue<KeyCode>();
+    private KeyCode preInput;
+    public float comboWaitTime;
 
     KeyCode[] SkillInput = { KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.Z, KeyCode.X, KeyCode.C };
 
-    public void AttackAnimationEnd() => anim.SetFloat("KeyPressRemainTime", 0.25f);
+    public void AttackAnimationEnd()
+    {
+        anim.SetFloat("KeyPressRemainTime", 0.25f);
+        stiffness = false;
+        comboWaitTime = 0.25f;
+    }
 
     protected virtual void Start()
     {
+        RageObj.SetActive(false);
         rigid = GetComponent<Rigidbody2D>();
         maxHp = HP;
+        tlqkfGauge = 0;
+        maxtlqkfGauge = 175;
     }
 
     protected virtual void Update()
@@ -79,7 +86,19 @@ public abstract class Player : MonoBehaviour
         {
             stiffness = true;
             if (skillCoroutine != null) StopCoroutine(skillCoroutine);
-            anim.SetTrigger($"{buttonInput.Dequeue().ToString()[^1]}");
+
+            var input = buttonInput.Dequeue();
+            var comboIndex = anim.GetInteger($"{input.ToString()[^1]}AttackIndex");
+            var comboMaxIndex = anim.GetInteger($"{input.ToString()[^1]}AttackMaxIndex");
+            Debug.Log(preInput);
+
+            if(comboWaitTime > 0 && preInput == input && comboIndex != comboMaxIndex)
+                anim.SetInteger($"{input.ToString()[^1]}AttackIndex", comboIndex + 1);
+            else 
+                anim.SetInteger($"{preInput.ToString()[^1]}AttackIndex", 0);
+
+            anim.SetTrigger($"{input.ToString()[^1]}");
+            preInput = input;
         }
     }
     void HitRotation()
@@ -96,16 +115,15 @@ public abstract class Player : MonoBehaviour
             if (Input.GetKeyDown(key))
             {
                 buttonInput.Enqueue(key);
-                
             }
         }
         inputX = GetHorizontalInput();
         if (!stiffness)
         {
-            anim.SetInteger("Walk", (int)inputX * (FlipX ? -1 : 1));
+            anim.SetInteger("Walk", (int)inputX * (flipX ? -1 : 1));
             rigid.velocity = new Vector2(inputX * 100 * Time.deltaTime * MoveSpeed, rigid.velocity.y);
         }
-        if (Input.GetKeyDown(KeyCode.UpArrow) && isGround)
+        if (Input.GetKeyDown(KeyCode.UpArrow) && isGround && !stiffness)
         {
             transform.Translate(Vector2.up * 0.2f);
             anim.SetTrigger("Jump");
@@ -126,14 +144,27 @@ public abstract class Player : MonoBehaviour
                 sp.transform.DOLocalRotate(Vector3.zero, 1).SetEase(Ease.InQuint);
             }
         }
-        sp.flipX = FlipX;
+        sp.flipX = flipX;
         anim.SetBool("IsGround", isGround);
-        if (inputDelay >= 0.5f) InputReset();
-        else inputDelay += Time.deltaTime;
+        if (inputDelay >= 0.5f)
+        {
+            InputReset();
+        }
+        else
+        {
+            if (buttonInput.Count > 0)
+                inputDelay += Time.deltaTime;
+            else
+                inputDelay = 0;
+        }
+
+        if(comboWaitTime > 0)
+            comboWaitTime -= Time.deltaTime;
     }
     protected virtual void InputReset()
     {
         buttonInput.Clear();
+        inputDelay = 0;
     }
     float GetHorizontalInput()
     {
@@ -168,19 +199,28 @@ public abstract class Player : MonoBehaviour
         else
         {
             HP -= hitSkill.damage;
+            if(!isRage && HP <= maxHp * 0.3f)
+            {
+                isRage = true;
+                RageObj.SetActive(true);
+            }
             if (hitSkill.isThrow)
             {
                 transform.Translate(Vector2.up * 0.5f);
                 stiffness = true;
                 isHit = true;
-                rigid.velocity = hitSkill.dir * hitSkill.damage * (FlipX ? -1 : 1);
+                rigid.velocity = hitSkill.dir * hitSkill.damage * (flipX ? -1 : 1);
             }
             else
             {
                 Stiff(hitSkill.hitStiffTime);
             }
-
         }
+        tlqkfGauge += hitSkill.damage * 1.5f;
+        tlqkfGauge = Mathf.Clamp(tlqkfGauge,0,maxtlqkfGauge);
+
+        UIManager.instance.UIUpdate();
+        print(tlqkfGauge);
     }
     public void Stiff(float stiffTime)
     {

@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance {get; private set;}
 
+    public Player player, Enemy;
+
     private void Awake()
     {
         instance = this;
