@@ -17,7 +17,7 @@ public class Limbus : MonoBehaviour
     {
         var Speed = MoveSpeed;
         MoveSpeed = 0;
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.3f);
         MoveSpeed = Speed;
     }
     void Update()

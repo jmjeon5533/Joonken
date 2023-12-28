@@ -48,20 +48,39 @@ public class OK : Player
     }
     new void Update()
     {
-        time += Time.deltaTime;
-        transform.position = new Vector2(0,Mathf.Sin(time)) + pos;
+
     }
     public override void Damage(Skill hitSkill)
     {
-        base.Damage(hitSkill);
-        StartCoroutine(moveMoonY());
-    }
-    IEnumerator moveMoonY()
-    {
-        transform.position = transform.position + new Vector3(-0.5f,0);
-        yield return new WaitForSeconds(0.1f);
-        transform.position = transform.position + new Vector3(1f,0);
-        yield return new WaitForSeconds(0.1f);
-        transform.position = transform.position + new Vector3(0.5f,0);
+        if (isGuard)
+        {
+            Stiff(hitSkill.guardStiffTime);
+        }
+        else
+        {
+            HP -= hitSkill.damage;
+            if(!isRage && HP <= maxHp * 0.3f)
+            {
+                isRage = true;
+                RageObj.SetActive(true);
+            }
+            if (hitSkill.isThrow)
+            {
+                transform.Translate(Vector2.up * 0.5f);
+                stiffness = true;
+                isHit = true;
+                rigid.velocity = hitSkill.dir * hitSkill.damage * (flipX ? -1 : 1);
+            }
+            else
+            {
+                Stiff(hitSkill.hitStiffTime);
+            }
+        }
+        anim.SetTrigger("Damage");
+        tlqkfGauge += hitSkill.damage * 1.5f;
+        tlqkfGauge = Mathf.Clamp(tlqkfGauge,0,maxtlqkfGauge);
+
+        UIManager.instance.UIUpdate();
+        print(tlqkfGauge);
     }
 }

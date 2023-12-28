@@ -6,30 +6,51 @@ public class KimJoonwoo : Player
 {
     int normalInput = 0;
     [SerializeField] GameObject limbus;
+    [SerializeField] ParticleSystem SpiritObj;
     public override void Dash()
     {
         print("A");
-        
+
     }
     public override void PowerSkill()
     {
         print("S");
-        
+        Instantiate(SpiritObj, transform.position, Quaternion.identity);
+        Collider2D[] hitall = Physics2D.OverlapBoxAll(transform.position, new Vector2(15, 15), 0, LayerMask.GetMask("Entity"));
+        foreach (var hit in hitall)
+        {
+            if (hit.CompareTag("Enemy"))
+            {
+                hit.GetComponent<Player>().Damage(skillLists[2].skill);
+                print(hit.name);
+            }
+        }
     }
     public override void Ultimate()
     {
         var spawnPos = (flipX ? transform.position + Vector3.right * 6 : transform.position + Vector3.left * 6) + Vector3.up * 1.5f;
-        var bus = Instantiate(limbus,spawnPos,Quaternion.identity).GetComponent<Limbus>();
+        var bus = Instantiate(limbus, spawnPos, Quaternion.identity).GetComponent<Limbus>();
         bus.player = this;
+        Instantiate(SpiritObj, transform.position, Quaternion.identity).GetComponent<ParticleSystem>();
+        GameManager.instance.UltimateFade();
+        StartCoroutine(UltimateProduce());
+    }
+    IEnumerator UltimateProduce()
+    {
+        Time.timeScale = 0;
+        yield return new WaitForSecondsRealtime(1f);
+        Time.timeScale = 1;
     }
     public override void NormalAttack()
     {
-        Collider2D hit = Physics2D.OverlapBox(transform.position + new Vector3(flipX ? -2 : 2, 0.5f),new Vector2(4,2),0,LayerMask.GetMask("Entity"));
-        if(hit == null) return;
-        if(hit.CompareTag("Enemy"))
+        Collider2D[] hitall = Physics2D.OverlapBoxAll(transform.position + new Vector3(flipX ? -2 : 2, 0.5f), new Vector2(4, 2), 0, LayerMask.GetMask("Entity"));
+        foreach (var hit in hitall)
         {
-            hit.GetComponent<Player>().Damage(skillLists[0].skill);
-            print(hit.name);
+            if (hit.CompareTag("Enemy"))
+            {
+                hit.GetComponent<Player>().Damage(skillLists[0].skill);
+                print(hit.name);
+            }
         }
     }
     public override void Damage(Skill hitSkill)
@@ -40,8 +61,8 @@ public class KimJoonwoo : Player
         }
         else
         {
-            HP -= hitSkill.damage * (1 + Mathf.InverseLerp(0,maxtlqkfGauge, tlqkfGauge) * 0.7f);
-            if(!isRage && HP <= maxHp * 0.3f)
+            HP -= hitSkill.damage * (1 + Mathf.InverseLerp(0, maxtlqkfGauge, tlqkfGauge) * 0.7f);
+            if (!isRage && HP <= maxHp * 0.3f)
             {
                 isRage = true;
                 RageObj.SetActive(true);
@@ -60,7 +81,7 @@ public class KimJoonwoo : Player
         }
         anim.SetTrigger("Damage");
         tlqkfGauge += hitSkill.damage * 3f;
-        tlqkfGauge = Mathf.Clamp(tlqkfGauge,0,maxtlqkfGauge);
+        tlqkfGauge = Mathf.Clamp(tlqkfGauge, 0, maxtlqkfGauge);
 
         UIManager.instance.UIUpdate();
 
@@ -70,18 +91,20 @@ public class KimJoonwoo : Player
     protected override void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(transform.position + new Vector3(flipX ? -2 : 2, 0.5f),new Vector2(4,2));
+        Gizmos.DrawWireCube(transform.position + new Vector3(flipX ? -2 : 2, 0.5f), new Vector2(4, 2));
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(transform.position, new Vector2(15, 15));
         base.OnDrawGizmos();
     }
     public override void SlowAttack()
     {
         print("X");
-        
+
     }
     public override void FastAttack()
     {
         print("C");
-        
+
     }
     protected override void InputReset()
     {

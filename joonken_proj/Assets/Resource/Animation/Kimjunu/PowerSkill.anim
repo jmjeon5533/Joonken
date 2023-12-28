@@ -28,7 +28,7 @@ AnimationClip:
     - time: 0.25
       value: {fileID: 21300000, guid: 53d236af709c95847aa762fb00d510e2, type: 3}
     - time: 0.33333334
-      value: {fileID: 21300000, guid: 5a1b719b86aa0d44f998aff520a10ac9, type: 3}
+      value: {fileID: 21300000, guid: 53d236af709c95847aa762fb00d510e2, type: 3}
     - time: 0.41666666
       value: {fileID: 21300000, guid: 34f1f510197a19e47920acd72b9c8237, type: 3}
     - time: 0.5
@@ -56,7 +56,7 @@ AnimationClip:
     - {fileID: 21300000, guid: 4e9670b9048991a449fb1f788b99fdd2, type: 3}
     - {fileID: 21300000, guid: 832d080ad9f67b846b0d99e3a5e97b00, type: 3}
     - {fileID: 21300000, guid: 53d236af709c95847aa762fb00d510e2, type: 3}
-    - {fileID: 21300000, guid: 5a1b719b86aa0d44f998aff520a10ac9, type: 3}
+    - {fileID: 21300000, guid: 53d236af709c95847aa762fb00d510e2, type: 3}
     - {fileID: 21300000, guid: 34f1f510197a19e47920acd72b9c8237, type: 3}
     - {fileID: 21300000, guid: b8fd3dfaaefc24f4c984310f5e5522ee, type: 3}
   m_AnimationClipSettings:
@@ -86,6 +86,13 @@ AnimationClip:
   m_Events:
   - time: 0
     functionName: AttackAnimationStart
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.33333334
+    functionName: PowerSkill
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

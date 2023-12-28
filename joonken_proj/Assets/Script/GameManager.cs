@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] Camera cam;
 
+    [SerializeField] SpriteRenderer bg;
+
     private void Awake()
     {
         instance = this;
@@ -27,5 +29,15 @@ public class GameManager : MonoBehaviour
     public void GameStart()
     {
         
+    }
+    public void UltimateFade()
+    {
+        StartCoroutine(FadeCor());
+    }
+    IEnumerator FadeCor()
+    {
+        bg.color = new Color(0.5f,0.5f,0.5f,1);
+        yield return new WaitForSecondsRealtime(1.5f);
+        bg.color = Color.white;
     }
 }
