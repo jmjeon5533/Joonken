@@ -39,6 +39,7 @@ public class OK : Player
 
     new void Start()
     {
+        rigid = GetComponent<Rigidbody2D>();
         RageObj.SetActive(false);
         pos = transform.position;       
         maxHp = HP;

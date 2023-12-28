@@ -14,4 +14,5 @@ public class PlayerModel : MonoBehaviour
     public void FastAttack() => player.FastAttack();
 
     public void AttackAnimationEnd() => player.AttackAnimationEnd();
+    public void AttackAnimationStart() => player.AttackAnimationStart();
 }

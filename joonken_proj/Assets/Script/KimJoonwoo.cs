@@ -5,6 +5,7 @@ using UnityEngine;
 public class KimJoonwoo : Player
 {
     int normalInput = 0;
+    [SerializeField] GameObject limbus;
     public override void Dash()
     {
         print("A");
@@ -17,14 +18,15 @@ public class KimJoonwoo : Player
     }
     public override void Ultimate()
     {
-        print("D");
-        
+        var spawnPos = (flipX ? transform.position + Vector3.right * 6 : transform.position + Vector3.left * 6) + Vector3.up * 1.5f;
+        var bus = Instantiate(limbus,spawnPos,Quaternion.identity).GetComponent<Limbus>();
+        bus.player = this;
     }
     public override void NormalAttack()
     {
         Collider2D hit = Physics2D.OverlapBox(transform.position + new Vector3(flipX ? -2 : 2, 0.5f),new Vector2(4,2),0,LayerMask.GetMask("Entity"));
         if(hit == null) return;
-        if(hit.CompareTag("Entity"))
+        if(hit.CompareTag("Enemy"))
         {
             hit.GetComponent<Player>().Damage(skillLists[0].skill);
             print(hit.name);
@@ -56,6 +58,7 @@ public class KimJoonwoo : Player
                 Stiff(hitSkill.hitStiffTime);
             }
         }
+        anim.SetTrigger("Damage");
         tlqkfGauge += hitSkill.damage * 3f;
         tlqkfGauge = Mathf.Clamp(tlqkfGauge,0,maxtlqkfGauge);
 

@@ -55,7 +55,10 @@ public abstract class Player : MonoBehaviour
         stiffness = false;
         comboWaitTime = 0.25f;
     }
-
+    public void AttackAnimationStart()
+    {
+        stiffness = true;
+    }
     protected virtual void Start()
     {
         RageObj.SetActive(false);
@@ -77,6 +80,8 @@ public abstract class Player : MonoBehaviour
             skill.dir = new Vector2(-1, 1);
             skill.throwPower = 10;
             skill.isThrow = true;
+            skill.hitStiffTime = 0.8f;
+            skill.guardStiffTime = 0.3f;
             Damage(skill);
         }
     }
@@ -84,7 +89,6 @@ public abstract class Player : MonoBehaviour
     {
         if (buttonInput.Count >= 1 && !stiffness)
         {
-            stiffness = true;
             if (skillCoroutine != null) StopCoroutine(skillCoroutine);
 
             var input = buttonInput.Dequeue();
@@ -146,6 +150,8 @@ public abstract class Player : MonoBehaviour
         }
         sp.flipX = flipX;
         anim.SetBool("IsGround", isGround);
+        anim.SetBool("IsRage", isRage);
+        anim.SetBool("Stiffness", stiffness);
         if (inputDelay >= 0.5f)
         {
             InputReset();
