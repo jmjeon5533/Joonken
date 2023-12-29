@@ -24,6 +24,7 @@ public abstract class Player : MonoBehaviour
     public bool isGuard; //방어 유무
     public bool isHit; //피격 유무
     public bool isRage; //레이지 유무
+    public bool isGetRage; //레이지 획득 유무
     public bool flipX = false;
     public float HP;
     public float maxHp;
@@ -35,6 +36,7 @@ public abstract class Player : MonoBehaviour
     [SerializeField] float RayDistance;
     [SerializeField] SpriteRenderer sp;
     [SerializeField] protected GameObject RageObj;
+    [SerializeField] protected GameObject Shadow;
     public Animator anim;
     public Player enemy;
     protected Rigidbody2D rigid;
@@ -84,6 +86,11 @@ public abstract class Player : MonoBehaviour
             skill.guardStiffTime = 0.3f;
             Damage(skill);
         }
+        Shadow.transform.position = new Vector3(transform.position.x, -4.65f, transform.position.z);
+        var sc = Mathf.Lerp(0.3f,0.1f,Mathf.InverseLerp(-3,1,transform.position.y));
+        Shadow.transform.localScale = new Vector3(sc,sc,sc);
+
+        RageObj.SetActive(isRage);
     }
     void UseSkill()
     {
@@ -205,10 +212,10 @@ public abstract class Player : MonoBehaviour
         else
         {
             HP -= hitSkill.damage;
-            if(!isRage && HP <= maxHp * 0.3f)
+            if(!isRage && HP <= maxHp * 0.3f && !isGetRage)
             {
                 isRage = true;
-                RageObj.SetActive(true);
+                isGetRage = true;
             }
             if (hitSkill.isThrow)
             {

@@ -48,7 +48,9 @@ public class OK : Player
     }
     new void Update()
     {
-
+        Shadow.transform.position = new Vector3(transform.position.x, -4.65f, transform.position.z);
+        var sc = Mathf.Lerp(0.3f,0.1f,Mathf.InverseLerp(-3,1,transform.position.y));
+        Shadow.transform.localScale = new Vector3(sc,sc,sc);
     }
     public override void Damage(Skill hitSkill)
     {
@@ -59,9 +61,10 @@ public class OK : Player
         else
         {
             HP -= hitSkill.damage;
-            if(!isRage && HP <= maxHp * 0.3f)
+            if(!isRage && HP <= maxHp * 0.3f && !isGetRage)
             {
                 isRage = true;
+                isGetRage = true;
                 RageObj.SetActive(true);
             }
             if (hitSkill.isThrow)

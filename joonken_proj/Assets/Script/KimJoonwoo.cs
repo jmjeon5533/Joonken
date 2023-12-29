@@ -23,6 +23,14 @@ public class KimJoonwoo : Player
             {
                 hit.GetComponent<Player>().Damage(skillLists[2].skill);
                 print(hit.name);
+                var Cost = Mathf.RoundToInt(maxtlqkfGauge * 0.25f);
+                print($"{Cost} : {tlqkfGauge}");
+                if(tlqkfGauge >= Cost)
+                {
+                    tlqkfGauge -= Cost;
+                    HP += Cost / 6;
+                    UIManager.instance.UIUpdate();
+                }
             }
         }
     }
@@ -31,8 +39,9 @@ public class KimJoonwoo : Player
         var spawnPos = (flipX ? transform.position + Vector3.right * 6 : transform.position + Vector3.left * 6) + Vector3.up * 1.5f;
         var bus = Instantiate(limbus, spawnPos, Quaternion.identity).GetComponent<Limbus>();
         bus.player = this;
+        isRage = false;
         Instantiate(SpiritObj, transform.position, Quaternion.identity).GetComponent<ParticleSystem>();
-        GameManager.instance.UltimateFade();
+        GameManager.instance.UltimateFade(transform);
         StartCoroutine(UltimateProduce());
     }
     IEnumerator UltimateProduce()
@@ -62,10 +71,10 @@ public class KimJoonwoo : Player
         else
         {
             HP -= hitSkill.damage * (1 + Mathf.InverseLerp(0, maxtlqkfGauge, tlqkfGauge) * 0.7f);
-            if (!isRage && HP <= maxHp * 0.3f)
+            if (!isRage && HP <= maxHp * 0.3f && !isGetRage)
             {
                 isRage = true;
-                RageObj.SetActive(true);
+                isGetRage = true;
             }
             if (hitSkill.isThrow)
             {

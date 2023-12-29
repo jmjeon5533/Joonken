@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] SpriteRenderer bg;
 
+    public Transform RageTarget;
+    public bool RageOn = false;
+
     private void Awake()
     {
         instance = this;
@@ -20,7 +23,7 @@ public class GameManager : MonoBehaviour
     {
         var p = player.transform.position;
         var e = Enemy.transform.position;
-        var camPosX = Mathf.Lerp(p.x,e.x,0.5f);
+        var camPosX = RageOn ? RageTarget.position.x : Mathf.Lerp(p.x,e.x,0.5f);
         cam.transform.position = new Vector3(camPosX,-1,-10);
         cam.orthographicSize = 5 + Mathf.Clamp(Vector2.Distance(p,e) - 14f,0,20) * 0.35f;
     }
@@ -30,14 +33,17 @@ public class GameManager : MonoBehaviour
     {
         
     }
-    public void UltimateFade()
+    public void UltimateFade(Transform target)
     {
+        RageTarget = target;
         StartCoroutine(FadeCor());
     }
     IEnumerator FadeCor()
     {
+        RageOn = true;
         bg.color = new Color(0.5f,0.5f,0.5f,1);
         yield return new WaitForSecondsRealtime(1.5f);
+        RageOn = false;
         bg.color = Color.white;
     }
 }
